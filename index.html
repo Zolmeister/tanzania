@@ -1,0 +1,398 @@
+<script src='https://ajax.googleapis.com/ajax/libs/jquery/1.5.1/jquery.min.js'></script>
+<script src='http://threejs.org/build/three.min.js'></script>
+<script src='//cdnjs.cloudflare.com/ajax/libs/spin.js/1.2.7/spin.min.js'></script>
+<script src='//cdnjs.cloudflare.com/ajax/libs/mousetrap/1.2.2/mousetrap.min.js'></script>
+
+<script id='vertexshader' type='x-shader/x-vertex'>
+  varying vec3 vColor;
+  uniform float amplitude;
+  uniform int transition;
+  uniform int fullscreen;
+  
+  void main() {
+    
+    vColor = color;
+    vec3 newPosition = position;
+    newPosition = newPosition * (amplitude + 1.0) + amplitude * newPosition;
+    
+    //newPosition = newPosition * (amplitude + 1.0) - vec3(0.0, (newPosition.y + 80.0) * 2.0, 0.0) * amplitude;
+    //newPosition = newPosition * (amplitude * newPosition.y / 10.0 + 1.0);
+    //newPosition = newPosition * (amplitude * abs(newPosition.y) / 5.0 + 1.0);
+    //newPosition = newPosition * (amplitude * abs(newPosition.y - newPosition.x) / 10.0 + 1.0);
+    //newPosition = newPosition * (amplitude * abs(newPosition.y * newPosition.x) / 1000.0 + 1.0);
+    //newPosition = newPosition * (amplitude * abs(cos(newPosition.x / 10.0))+ 1.0);
+    //newPosition = newPosition * (amplitude + 1.0) + amplitude * newPosition / 2.0;
+    //newPosition = newPosition * (amplitude * distance(newPosition, vec3(0.0,0.0,0.0)) * distance(newPosition, vec3(0.0,0.0,0.0)) / 3000.0 + 1.0);
+    //newPosition = newPosition - vec3(0.0, amplitude * distance(newPosition, vec3(0.0,0.0,0.0)) * 0.5, 0.0);
+    //newPosition = newPosition * (amplitude * abs(sin(distance(newPosition, vec3(0.0,0.0,0.0))))+ 1.0);
+    //newPosition = newPosition * (amplitude * abs(sin(distance(newPosition, vec3(0.0,0.0,0.0)) / 20.0))+ 1.0)/2.0;
+    //newPosition = newPosition * (amplitude * abs(cos(distance(newPosition, vec3(0.0,0.0,0.0)) / 20.0))+ 1.0)/2.0;
+    //newPosition = newPosition * (amplitude * abs(newPosition.y * newPosition.x) / 100000.0 + 1.0);
+    //newPosition = newPosition + vec3(0.0, amplitude * distance(newPosition, vec3(0.0,0.0,0.0)) * 1.2, 0.0);
+    //newPosition = newPosition * (amplitude * abs(sin(distance(newPosition, vec3(0.0,0.0,0.0)) / 1000.0))+ 1.0);
+    
+    if (fullscreen == 1) {
+      if ( transition == 0 ) {
+      
+        // Transition 1 - fan + down squeeze
+        newPosition = newPosition * (amplitude + 1.0) - vec3(0.0, (newPosition.y + 80.0) * 2.0, 0.0) * amplitude;
+        newPosition = newPosition * (amplitude * abs(sin(distance(newPosition, vec3(0.0,0.0,0.0)) / 400.0))+ 1.0);
+      
+      } else if ( transition == 1 ) {
+      
+        // Transition 2 - hour glass
+        newPosition = newPosition * (amplitude * abs(newPosition.y * newPosition.x) / 400000.0 + 1.0);
+        newPosition = newPosition * (amplitude * abs(newPosition.y) / 20.0 + 1.0);
+        
+      } else if ( transition == 2 ) {
+      
+        // Transition 3 - deep zoom circles
+        newPosition = newPosition * (amplitude + 1.0) + amplitude * newPosition / 4.0;
+        newPosition = newPosition * (amplitude * abs(sin(distance(newPosition, vec3(0.0,0.0,0.0)) / 400.0))+ 1.0);
+      
+      } else if ( transition == 3 ) {
+        
+        // Transition 4 - circle and X
+        newPosition = newPosition * (amplitude * abs(sin(distance(newPosition, vec3(0.0,0.0,0.0)) / 400.0))+ 1.0);
+        newPosition = newPosition * (amplitude * abs(sin(distance(newPosition, vec3(0.0,0.0,0.0)) / 400.0))+ 1.0);
+      
+      } else if ( transition == 4 ) {
+      
+        // Transition 5 - butterfly
+        newPosition = newPosition + vec3(0.0, amplitude * distance(newPosition, vec3(0.0,0.0,0.0)) * 1.2, 0.0);
+        newPosition = newPosition - vec3(0.0, amplitude * distance(newPosition, vec3(0.0,0.0,0.0)) * 0.8, 0.0);
+        newPosition = newPosition * (amplitude * abs(sin(distance(newPosition, vec3(0.0,0.0,0.0)) / 1000.0))+ 1.0);
+        newPosition = newPosition * (amplitude * abs(sin(distance(newPosition, vec3(0.0,0.0,0.0)) / 100.0))+ 1.0);
+        newPosition = newPosition * (amplitude * abs(newPosition.y * newPosition.x) / 100000.0 + 1.0);
+        
+      } else if ( transition == 5 ) {
+      
+        // Transition 6 - warped flex spread
+        newPosition = newPosition * (amplitude * abs(cos(newPosition.x / 120.0))+ 1.0);
+        newPosition = newPosition * (amplitude * abs(sin(distance(newPosition, vec3(0.0,0.0,0.0)) / 400.0))+ 1.0);
+      
+      } else if ( transition == 6 ) {
+      
+        // Transition 7 - fuzzy spread
+        newPosition = newPosition * (amplitude * abs(cos(newPosition.x / 40.0))+ 1.0);
+        newPosition = newPosition * (amplitude * abs(cos(newPosition.x / 80.0))+ 1.0);
+        newPosition = newPosition * (amplitude * abs(cos(newPosition.x / 160.0))+ 1.0);
+        newPosition = newPosition * (amplitude * abs(cos(newPosition.y / 40.0))+ 1.0);
+      } else if ( transition == 7 ) {
+        
+        // Transition 8 - vertical accordion zoomed in
+        newPosition = newPosition * (amplitude * abs(cos(newPosition.x / 120.0))+ 1.0);
+        newPosition = newPosition * (amplitude * abs(cos(newPosition.y / 400.0))+ 1.0);
+        newPosition = newPosition * (amplitude + 1.0) + amplitude * newPosition / 2.0;
+      
+      } else if ( transition == 8 ) {
+        
+        // Transition 9 - flat zoom + cone distort
+        newPosition = newPosition * (amplitude * distance(newPosition, vec3(0.0,0.0,0.0)) * distance(newPosition, vec3(0.0,0.0,0.0)) / 12000.0 + 1.0);
+        newPosition = newPosition - vec3(0.0, amplitude * distance(newPosition, vec3(0.0,0.0,0.0)) * 0.5, 0.0);
+      
+      } else if ( transition == 9 ) {
+        
+        // Transition 10 - artifacts from missing points over time
+        newPosition = newPosition * (amplitude + 1.0) + amplitude * newPosition * 2.;
+        if (mod(floor(newPosition.x), 2.0) == 0.0 && amplitude > 0.3){
+          vColor = vec3(0.0,0.0,0.0);
+        }
+        if (mod(floor(newPosition.y), 5.0) == 0.0 && amplitude > 0.1){
+          vColor = vec3(0.0,0.0,0.0);
+        }
+        if (mod(floor(newPosition.x), 4.0) == 0.0 && amplitude > 0.5){
+          vColor = vec3(0.0,0.0,0.0);
+        }
+        if (mod(floor(newPosition.y), 3.0) == 0.0 && amplitude > 0.7){
+          vColor = vec3(0.0,0.0,0.0);
+        }
+        if (mod(floor(newPosition.y), 2.0) == 0.0 && mod(floor(newPosition.x), 3.0) == 0.0 && amplitude > 0.9){
+          vColor = vec3(0.0,0.0,0.0);
+        }
+        
+      }
+    } else {
+      if ( transition == 0 ) {
+      
+        // Transition 1 - fan + down squeeze
+        newPosition = newPosition * (amplitude + 1.0) - vec3(0.0, (newPosition.y + 80.0) * 2.0, 0.0) * amplitude;
+        newPosition = newPosition * (amplitude * abs(sin(distance(newPosition, vec3(0.0,0.0,0.0)) / 100.0))+ 1.0);
+      
+      } else if ( transition == 1 ) {
+      
+        // Transition 2 - hour glass
+        newPosition = newPosition * (amplitude * abs(newPosition.y * newPosition.x) / 100000.0 + 1.0);
+        newPosition = newPosition * (amplitude * abs(newPosition.y) / 5.0 + 1.0);
+        
+      } else if ( transition == 2 ) {
+      
+        // Transition 3 - deep zoom circles
+        newPosition = newPosition * (amplitude + 1.0) + amplitude * newPosition / 1.0;
+        newPosition = newPosition * (amplitude * abs(sin(distance(newPosition, vec3(0.0,0.0,0.0)) / 100.0))+ 1.0);
+      
+      } else if ( transition == 3 ) {
+        
+        // Transition 4 - circle and X
+        newPosition = newPosition * (amplitude * abs(sin(distance(newPosition, vec3(0.0,0.0,0.0)) / 100.0))+ 1.0);
+        newPosition = newPosition * (amplitude * abs(sin(distance(newPosition, vec3(0.0,0.0,0.0)) / 100.0))+ 1.0);
+      
+      } else if ( transition == 4 ) {
+      
+        // Transition 5 - 4 orb spread
+        newPosition = newPosition * (amplitude * abs(sin(distance(newPosition, vec3(0.0,0.0,0.0)) / 1000.0))+ 1.0);
+        newPosition = newPosition * (amplitude * abs(sin(distance(newPosition, vec3(0.0,0.0,0.0)) / 100.0))+ 1.0);
+        newPosition = newPosition * (amplitude * abs(newPosition.y * newPosition.x) / 100000.0 + 1.0);
+        
+      } else if ( transition == 5 ) {
+      
+        // Transition 6 - warped flex spread
+        newPosition = newPosition * (amplitude * abs(cos(newPosition.x / 30.0))+ 1.0);
+        newPosition = newPosition * (amplitude * abs(sin(distance(newPosition, vec3(0.0,0.0,0.0)) / 100.0))+ 1.0);
+      
+      } else if ( transition == 6 ) {
+      
+        // Transition 7 - fuzzy spread
+        newPosition = newPosition * (amplitude * abs(cos(newPosition.x / 10.0))+ 1.0);
+        newPosition = newPosition * (amplitude * abs(cos(newPosition.x / 20.0))+ 1.0);
+        newPosition = newPosition * (amplitude * abs(cos(newPosition.x / 40.0))+ 1.0);
+        newPosition = newPosition * (amplitude * abs(cos(newPosition.y / 10.0))+ 1.0);
+      } else if ( transition == 7 ) {
+        
+        // Transition 8 - vertical accordion zoomed in
+        newPosition = newPosition * (amplitude * abs(cos(newPosition.x / 30.0))+ 1.0);
+        newPosition = newPosition * (amplitude * abs(cos(newPosition.y / 100.0))+ 1.0);
+        newPosition = newPosition * (amplitude + 1.0) + amplitude * newPosition / 2.0;
+      
+      } else if ( transition == 8 ) {
+        
+        // Transition 9 - flat zoom + cone distort
+        newPosition = newPosition * (amplitude * distance(newPosition, vec3(0.0,0.0,0.0)) * distance(newPosition, vec3(0.0,0.0,0.0)) / 3000.0 + 1.0);
+        newPosition = newPosition - vec3(0.0, amplitude * distance(newPosition, vec3(0.0,0.0,0.0)) * 0.5, 0.0);
+      
+      } else if ( transition == 9 ) {
+        
+        // Transition 10 - artifacts from missing points over time
+        newPosition = newPosition * (amplitude + 1.0) + amplitude * newPosition * 2.;
+        if (mod(floor(newPosition.x), 2.0) == 0.0 && amplitude > 0.3){
+          vColor = vec3(0.0,0.0,0.0);
+        }
+        if (mod(floor(newPosition.y), 5.0) == 0.0 && amplitude > 0.1){
+          vColor = vec3(0.0,0.0,0.0);
+        }
+        if (mod(floor(newPosition.x), 4.0) == 0.0 && amplitude > 0.5){
+          vColor = vec3(0.0,0.0,0.0);
+        }
+        if (mod(floor(newPosition.y), 3.0) == 0.0 && amplitude > 0.7){
+          vColor = vec3(0.0,0.0,0.0);
+        }
+        if (mod(floor(newPosition.y), 2.0) == 0.0 && mod(floor(newPosition.x), 3.0) == 0.0 && amplitude > 0.9){
+          vColor = vec3(0.0,0.0,0.0);
+        }
+        
+      }
+    }
+    vec4 mvPosition = modelViewMatrix * vec4( newPosition, 1.0 );
+    gl_PointSize = 1.0;
+    gl_Position = projectionMatrix * mvPosition;
+  }
+</script>
+
+<script id='fragmentshader' type='x-shader/x-fragment'>
+  varying vec3 vColor;
+  
+  void main() {
+    gl_FragColor = vec4(vColor, 1.0);
+  }
+</script>
+
+<script id='vertexworker' type='text/js-worker'>
+onmessage = function (e) {
+  var data = e.data
+  var num = data.num
+  var imgWidth = data.w
+  var imgHeight = data.h
+  var percent = Math.floor(num / 100)
+  var verts = new Float32Array(num)
+  
+  var x = 0
+  var y = 0
+  for (var i = 0; i < num; i += 3) {
+    // x
+    verts[i] = x - imgWidth / 2
+
+    // y
+    verts[i + 1] = -y + imgHeight / 2
+
+    x++
+    if (x === imgWidth) {
+      x = 0
+      y++
+    }
+  }
+  postMessage(verts.buffer, [verts.buffer]);
+  close()
+};
+</script>
+
+<script id='imageworker' type='text/js-worker'>
+onmessage = function (e) {
+  var pixels = new Uint8ClampedArray(e.data.pixels)
+  var arr = new Float32Array(e.data.outputBuffer)
+  var len = e.data.len
+  
+  for (var i = 0; i < len; i++) {
+    arr[i*3] = pixels[i*4] / 255
+    arr[i*3 + 1] = pixels[i*4+1] / 255
+    arr[i*3 + 2] = pixels[i*4+2] / 255
+  }
+  
+  postMessage(arr.buffer, [arr.buffer])
+  return close()
+  //var colors = []
+  //var len = pixels.length
+  //var percent = Math.floor(len / 100)
+  
+  for (var i = 0; i < len; i += 4) {
+    colors.push({r: pixels[i] / 255, g: pixels[i + 1] / 255, b: pixels[i + 2] / 255})
+    //i % percent === 0 && postMessage(1)
+  }
+  
+  postMessage(colors);
+  close()
+};
+</script>
+
+<style>
+body {
+  margin: 0;
+}
+#main-taz {
+  width: 610px;
+  height: 300px;
+  background-color: black;
+}
+#main-taz:full-screen {
+  width: 100%;
+  height: 100%;
+}
+#main-taz:-webkit-full-screen {
+  width: 100%;
+  height: 100%;
+}
+#main-taz:-moz-full-screen {
+  width: 100%;
+  height: 100%;
+}
+#sidebar-taz {
+  float: left;
+  height: 100%;
+  width: 148px;
+  overflow: auto;
+}
+#container-taz {
+  position: relative;
+  height: 100%;
+  float: right;
+  width: 462px;
+}
+#main-taz:full-screen #container-taz {
+  width: calc( 100% - 148px );
+}
+#main-taz:-webkit-full-screen #container-taz {
+  width: -webkit-calc( 100% - 148px );
+}
+#main-taz:-moz-full-screen #container-taz {
+  width: -moz-calc( 100% - 148px );
+}
+.thumbnail-taz {
+  width: 120px;
+  height: 80px;
+  margin: 10px auto;
+  border: solid 2px #333;
+  border-radius: 2px;
+}
+#sidebar-taz .selected-taz  {
+  border-color: #999;
+}
+#overlay-taz {
+  position:absolute;
+  top: 50%;
+  left: 0;
+  text-align: center;
+  width: 100%;
+  height: 100px;
+  line-height: 100px;
+  margin-top: -50px;
+  background-color: #222;
+}
+.button-taz {
+  font-size: 22px;
+  color: white;
+  text-align: center;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.25);
+  background: #2980b9;
+  border-bottom: 2px solid #2475ab;
+  cursor: pointer;
+  box-shadow: inset 0 -2px #2475ab;
+  -webkit-box-shadow: inset 0 -2px #2475ab;
+  -moz-box-shadow: inset 0 -2px #2475ab;
+  padding: 10px 50px;
+  margin: 0px 20px;
+  border-radius: 5px;
+}
+.button-taz:active {
+  top: 1px;
+  outline: none;
+  box-shadow: none;
+  -webkit-box-shadow: none;
+  -moz-box-shadow: none;
+}
+#loading-taz{
+  font-size: 22px;
+  color: white;
+}
+#sidebar-taz::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+#sidebar-taz::-webkit-scrollbar-track-piece {
+  background: #222;
+}
+
+#sidebar-taz::-webkit-scrollbar-thumb {
+  background: #1C5880;
+  border-radius: 2px;
+}
+
+#sidebar-taz::-webkit-scrollbar-corner       {
+  background: #222;
+}
+
+#sidebar-taz::-webkit-scrollbar-thumb:window-inactive {
+  background: #164766;
+}
+#ready-taz {
+  background-color: #168C12;
+  width: 4px;
+  height: 4px;
+}
+</style>
+
+<div id='main-taz'>
+  <div id='sidebar-taz'></div>
+  <div id='container-taz'>
+    <div id='overlay-taz'>
+      <div id='buttons-taz'>
+        <span class='button-taz' id='start-button-taz'>start</span>
+        <span class='button-taz' id='fullscreen-button-taz'>fullscreen</span>
+      </div>
+      <div id='loading-taz' style='display: none'>
+        Loading...
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src='main.js'></script>
