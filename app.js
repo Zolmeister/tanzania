@@ -30,6 +30,10 @@ app.get('/', function(req, res){
     res.sendfile('index.html')
 })
 
+app.get('/full', function(req, res){
+    res.sendfile('index.html')
+})
+
 app.get('/ping', function (req, res) {
   res.send('pong')
 })
