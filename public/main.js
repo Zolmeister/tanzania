@@ -131,7 +131,7 @@
           }
         })($el, spinner)
 
-        img.src = 'thumb/' + (i + 1) + '.jpg'
+        img.src = 'public/thumb/' + (i + 1) + '.jpg'
         $el.data('loaded', true)
 
         // preload next 4 images
@@ -310,7 +310,7 @@
       alert('There was an unexpected error')
     }
 
-    img.src = 'imgs/' + num + '.jpg'
+    img.src = 'public/imgs/' + num + '.jpg'
   }
 
   /* **** Here is where the THREE code lives **** */
